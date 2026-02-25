@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ESTP | Sovereign Minting Authority Terminal</title>
+    <style>
+        body { margin: 0; display: flex; height: 100vh; background: #0c0e12; font-family: sans-serif; }
+        #sidebar { width: 260px; background: #161a22; border-right: 1px solid #2d343f; padding: 20px; }
+        #viewer { flex-grow: 1; border: none; }
+        .nav-btn { 
+            width: 100%; padding: 12px; margin-bottom: 10px; text-align: left;
+            background: #1c222d; color: #fff; border: 1px solid #2d343f; cursor: pointer;
+            text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;
+        }
+        .nav-btn:hover { background: #2d343f; }
+        .active { border-left: 4px solid #007bff; background: #2d343f; }
+        .label { color: #888; font-size: 0.7rem; margin: 15px 0 5px 5px; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+<div id="sidebar">
+    <h2 style="color:#fff; font-size: 1.2rem; letter-spacing: 2px;">ESTP TERMINAL</h2>
+    
+    <div class="label">Institutional</div>
+    <button class="nav-btn active" onclick="loadPortal('bank-regulator.html', this)">Bank Regulator Portal</button>
+    
+    <div class="label">Public Gateway</div>
+    <button class="nav-btn" onclick="loadPortal('public-gateway.html', this)">Public Access Gateway</button>
+    
+    <div class="label">Industrial Partners</div>
+    <button class="nav-btn" onclick="loadPortal('industrial-partner-1.html', this)">Partner 1: Shipping</button>
+    <button class="nav-btn" onclick="loadPortal('industrial-partner-2.html', this)">Partner 2: Energy</button>
+    <button class="nav-btn" onclick="loadPortal('industrial-partner-3.html', this)">Partner 3: Manufacturing</button>
+    <button class="nav-btn" onclick="loadPortal('industrial-partner-4.html', this)">Partner 4: Technology</button>
+</div>
+
+<iframe id="viewer" src="bank-regulator.html"></iframe>
+
+<script>
+    function loadPortal(file, btn) {
+        document.getElementById('viewer').src = file;
+        let btns = document.getElementsByClassName('nav-btn');
+        for(let b of btns) { b.classList.remove('active'); }
+        btn.classList.add('active');
+    }
+</script>
+
+</body>
+</html>
+
