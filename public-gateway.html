@@ -2,56 +2,102 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ESTP | Public Gateway Portal</title>
+    <title>ESTP | Public Gateway</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="gateway-shell">
         <h1>PUBLIC ACCESS GATEWAY</h1>
 
-        <section class="token-a-sector yellow-line">
-            <h2>Token A: Primary Gateway Asset</h2>
-            <p>Market Cap Status: <span id="token-a-cap">10% of Blue Line</span></p>
+        <section class="capacity-monitor red-line">
+            <h2>Current System Capacity</h2>
             <div class="stat-box">
-                <p>Available Token A: <span id="token-a-supply">1,000,000</span></p>
-                [span_5](start_span)<small>Deflationary Asset: Strictly capped by ESTP Anchor[span_5](end_span)</small>
+                <p id="room-display">Calculating Room...</p>
+                <small id="cap-subtitle">Based on 10% of Sovereign Anchor</small>
             </div>
-            <button onclick="mintTokenA()">Purchase Token A</button>
-        </section>
-
-        <section class="token-b-sector green-line">
-            <h2>Token B: Investment Mechanism (90-Day Lock)</h2>
-            [span_6](start_span)<p>Function: Code-Based Escrow[span_6](end_span)</p>
-            <div class="input-row">
-                <input type="number" id="lock-amount" placeholder="Amount of Token A to Lock">
-                <button onclick="lockForTokenB()">Lock for 14% Yield</button>
+            <div class="progress-container" style="background: #222; border-radius: 5px; height: 10px; width: 100%;">
+                <div id="progress-bar" style="background: var(--yellow); width: 0%; height: 100%; transition: 0.5s;"></div>
             </div>
-            [span_7](start_span)<small>Note: Yield is 14% of industrial profits, not APY[span_7](end_span).</small>
         </section>
 
-        <section class="exit-gate">
-            <h3>Emergency Exit</h3>
-            <button class="penalty-btn" onclick="triggerPenalty()">Opt-Out of Commitment</button>
-            [span_8](start_span)<p><small>Warning: Early withdrawal triggers a 14% penalty to Wallet 1[span_8](end_span).</small></p>
+        <section class="action-gate yellow-line">
+            <h3>Initiate 90-Day Lock (Token A → Token B)</h3>
+            <p>Enter the amount you wish to contribute to the current 6-hour heartbeat.</p>
+            
+            <div class="input-group">
+                <input type="number" id="lock-amt" placeholder="Amount of Token A" oninput="validateInput()">
+                <button id="lock-btn" onclick="executeLock()" disabled>INSUFFICIENT CAPACITY</button>
+            </div>
+            <p id="validation-msg" style="color: #888; font-size: 0.8rem; margin-top: 10px;"></p>
         </section>
 
-        <div id="status-feed"></div>
+        <section class="auto-send-log" id="log-section" style="display:none;">
+            <h4 style="color: var(--green);">[SYSTEM] AUTO-SEND TRIGGERED</h4>
+            <p id="auto-send-msg"></p>
+        </section>
     </div>
 
     <script>
-        // Logic based on Institutional Brief
-        function triggerPenalty() {
-            const feed = document.getElementById('status-feed');
-            [span_9](start_span)[span_10](start_span)feed.innerHTML = "<p style='color:red;'>[ALERT] 14% Vault Penalty Collected by Wallet 1[span_9](end_span)[span_10](end_span).</p>";
+        // These values would be pulled from the Bank's Master Ledger in a live environment
+        let anchorValue = 10000000; // The Blue Line
+        let redLineLimit = anchorValue * 0.10; // 10% Max Capacity
+        let currentUtilization = 850000; // Example: $850k already locked by public
+
+        function updateUI() {
+            const roomLeft = redLineLimit - currentUtilization;
+            const percentage = (currentUtilization / redLineLimit) * 100;
+
+            document.getElementById('room-display').innerText = `$${roomLeft.toLocaleString()} Remaining`;
+            document.getElementById('progress-bar').style.width = percentage + "%";
+            
+            if (roomLeft <= 0) {
+                document.getElementById('room-display').innerText = "SYSTEM MAXED";
+                document.getElementById('room-display').style.color = "var(--red)";
+            }
+            return roomLeft;
         }
 
-        function lockForTokenB() {
-            const amt = document.getElementById('lock-amount').value;
-            const feed = document.getElementById('status-feed');
-            [span_11](start_span)// Starts the 90-day cycle (360 separate 6-hour heartbeats)[span_11](end_span)
-            feed.innerHTML = `<p>[SUCCESS] ${amt} Token A locked. [span_12](start_span)[span_13](start_span)Token B minted for current 6-hour heartbeat[span_12](end_span)[span_13](end_span).</p>`;
+        function validateInput() {
+            const inputAmt = parseFloat(document.getElementById('lock-amt').value);
+            const roomLeft = updateUI();
+            const btn = document.getElementById('lock-btn');
+            const msg = document.getElementById('validation-msg');
+
+            if (isNaN(inputAmt) || inputAmt <= 0) {
+                btn.disabled = true;
+                btn.innerText = "ENTER AMOUNT";
+                msg.innerText = "";
+            } else if (inputAmt > roomLeft) {
+                btn.disabled = true;
+                btn.innerText = "EXCEEDS CAPACITY";
+                msg.innerText = `Error: You are attempting to lock $${inputAmt.toLocaleString()}, but only $${roomLeft.toLocaleString()} is available.`;
+                msg.style.color = "var(--red)";
+            } else {
+                btn.disabled = false;
+                btn.innerText = "LOCK & AUTO-SEND";
+                btn.style.background = "var(--green)";
+                msg.innerText = `Ready to lock. This will trigger an $${(inputAmt * 0.75).toLocaleString()} (75%) loan to Industrial Partners.`;
+                msg.style.color = "var(--green)";
+            }
         }
+
+        function executeLock() {
+            const inputAmt = parseFloat(document.getElementById('lock-amt').value);
+            const loanAmt = inputAmt * 0.75;
+            
+            // Log the "Auto-Send" to show the bank it's instantaneous
+            document.getElementById('log-section').style.display = "block";
+            document.getElementById('auto-send-msg').innerText = 
+                `Successfully locked $${inputAmt.toLocaleString()}. 
+                Instruction sent to Wallet 2: Disburse $${loanAmt.toLocaleString()} ALI to Industrial Spending Accounts.`;
+            
+            currentUtilization += inputAmt;
+            updateUI();
+            validateInput();
+        }
+
+        // Initialize display
+        updateUI();
     </script>
 </body>
 </html>
-
