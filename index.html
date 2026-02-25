@@ -2,27 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>ESTP | Sovereign Launcher</title>
+    <title>ESTP TERMINAL</title>
     <style>
-        body { margin: 0; display: flex; height: 100vh; background: #0a0c10; font-family: sans-serif; color: white; }
-        #sidebar { width: 260px; background: #11141a; border-right: 1px solid #2d333b; padding: 20px; }
+        body { margin: 0; display: flex; height: 100vh; background: #0a0c10; font-family: 'Inter', sans-serif; color: white; }
+        #sidebar { width: 280px; background: #11141a; border-right: 1px solid #2d333b; padding: 20px; display: flex; flex-direction: column; }
         iframe { flex-grow: 1; border: none; background: #0a0c10; }
-        .nav-btn { width: 100%; padding: 12px; margin-bottom: 8px; text-align: left; background: #1c2028; color: #848e9c; border: 1px solid #2d333b; cursor: pointer; text-transform: uppercase; font-size: 0.7rem; }
-        .nav-btn:hover { background: #2d333b; color: #fff; }
-        .active { border-left: 3px solid #007bff; color: #fff; background: #2d333b; }
-        .label { font-size: 0.6rem; color: #555; margin: 20px 0 5px 5px; text-transform: uppercase; }
+        .nav-group { margin-bottom: 25px; }
+        .label { font-size: 0.65rem; color: #5e6673; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .nav-btn { width: 100%; padding: 10px; margin-bottom: 5px; text-align: left; background: #1c2028; color: #d1d4dc; border: 1px solid #2d333b; cursor: pointer; font-size: 0.75rem; }
+        .nav-btn:hover { background: #2d333b; border-color: #007bff; }
+        .active { background: #2d333b; border-left: 3px solid #007bff; color: #fff; }
     </style>
 </head>
 <body>
     <div id="sidebar">
-        <h2 style="color:#007bff; letter-spacing: 2px;">ESTP v3.0</h2>
-        <div class="label">Sovereign Control</div>
-        <button class="nav-btn active" onclick="load('bank-regulator.html', this)">Bank Regulator</button>
-        <div class="label">Public Market</div>
-        <button class="nav-btn" onclick="load('public-gateway.html', this)">Public Access Gateway</button>
-        <div class="label">Industrial Silos</div>
-        <button class="nav-btn" onclick="load('partner-shipping.html', this)">Silo 1: Shipping</button>
-        <button class="nav-btn" onclick="load('partner-energy.html', this)">Silo 2: Energy</button>
+        <h2 style="font-size: 1.1rem; letter-spacing: 1px; margin-bottom: 30px;">ESTP TERMINAL</h2>
+        
+        <div class="nav-group">
+            <div class="label">Institutional</div>
+            <button class="nav-btn active" onclick="load('bank-regulator.html', this)">Bank Regulator Portal</button>
+        </div>
+
+        <div class="nav-group">
+            <div class="label">Public Gateway</div>
+            <button class="nav-btn" onclick="load('public-gateway.html', this)">Public Access Gateway</button>
+        </div>
+
+        <div class="nav-group">
+            <div class="label">Individual Industry Silos</div>
+            <button class="nav-btn" onclick="load('partner-shipping.html', this)">Partner 1: Shipping</button>
+            <button class="nav-btn" onclick="load('partner-energy.html', this)">Partner 2: Energy</button>
+            <button class="nav-btn" onclick="load('partner-manu.html', this)">Partner 3: Manufacturing</button>
+            <button class="nav-btn" onclick="load('partner-tech.html', this)">Partner 4: Technology</button>
+        </div>
     </div>
     <iframe id="viewer" src="bank-regulator.html"></iframe>
     <script>
