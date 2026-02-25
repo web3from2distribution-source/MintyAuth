@@ -1,46 +1,60 @@
 <!DOCTYPE html>
 <html>
-<head><style>
-    body { background: #0a0c10; color: #d1d4dc; font-family: sans-serif; padding: 20px; }
-    .silo-card { background: #14171d; border: 1px solid #2d333b; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-    .wallet-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px; }
-    .wallet { background: #0a0c10; padding: 15px; border-radius: 4px; text-align: center; border-top: 2px solid #007bff; }
-    h2 { color: #007bff; font-size: 1rem; border-bottom: 1px solid #2d333b; padding-bottom: 10px; }
-    button { background: #2d333b; color: white; border: none; padding: 5px 10px; cursor: pointer; margin-top: 5px; font-size: 0.7rem; }
-</style></head>
+<head>
+    <style>
+        body { background: #0a0c10; color: #fff; font-family: sans-serif; padding: 30px; }
+        .master-card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 25px; max-width: 900px; }
+        .silo-provision { border-bottom: 1px solid #30363d; padding-bottom: 20px; margin-bottom: 25px; }
+        .input-box { background: #0d1117; border: 1px solid #30363d; color: white; padding: 10px; width: 200px; }
+        .btn-init { background: #fff; color: #000; border: none; padding: 10px 15px; font-weight: bold; cursor: pointer; }
+        .wallet-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .wallet { background: #1c2128; padding: 20px; border-radius: 4px; }
+        .wallet h4 { margin: 0 0 15px 0; font-size: 0.8rem; color: #8b949e; }
+        .balance { font-size: 1.2rem; display: block; margin-bottom: 15px; font-family: monospace; }
+        .btn-action { background: #fff; color: #000; border: none; width: 80px; padding: 5px; margin: 2px; font-size: 0.7rem; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+    </style>
+</head>
 <body>
-    <h1>Silo Management Terminal</h1>
-    
-    <div class="silo-card">
-        <h2>ESTP ACCOUNT: SHIPPING_ALPHA (SILO-01)</h2>
-        <p>Partner Home Account: <span id="home-1">$10,000,000.00</span></p>
-        <div class="wallet-grid">
-            <div class="wallet">W1: Fees<br><span id="w1-1">$0.00</span></div>
-            <div class="wallet">W2: ALI Engine<br><span id="w2-1">$1,000,000</span><br>
-                <button onclick="adj('w2-1', 100000)">Deposit</button>
-                <button onclick="adj('w2-1', -100000)">Withdraw</button>
-            </div>
-            <div class="wallet">W3: Principal<br><span id="w3-1">$0.00</span></div>
+    <div class="master-card">
+        <h3>BANK REGULATOR | MASTER CONTROL</h3>
+        
+        <div class="silo-provision">
+            <p style="color:#58a6ff; font-size: 0.9rem;">Silo Management: Provision New Partner Account</p>
+            <input type="text" class="input-box" id="pName" placeholder="Partner Name">
+            <button class="btn-init" onclick="provision()">INITIALIZE & SEED SILO</button>
         </div>
-    </div>
 
-    <div class="silo-card">
-        <h2>ESTP ACCOUNT: ENERGY_BETA (SILO-02)</h2>
-        <p>Partner Home Account: <span id="home-2">$10,000,000.00</span></p>
         <div class="wallet-grid">
-            <div class="wallet">W1: Fees<br><span id="w1-2">$0.00</span></div>
-            <div class="wallet">W2: ALI Engine<br><span id="w2-2">$500,000</span><br>
-                <button onclick="adj('w2-2', 100000)">Deposit</button>
+            <div class="wallet">
+                <h4>Wallet 1: Fee Collector</h4>
+                <span class="balance" id="w1">$0.00</span>
+                <button class="btn-action" onclick="adj('w1', 1000)">Deposit</button><br>
+                <button class="btn-action" onclick="adj('w1', -1000)">Withdraw</button>
             </div>
-            <div class="wallet">W3: Principal<br><span id="w3-2">$0.00</span></div>
+            <div class="wallet">
+                <h4>Wallet 2: ALI Vault</h4>
+                <span class="balance" id="w2">$1,000,000</span>
+                <button class="btn-action" onclick="adj('w2', 100000)">Deposit</button><br>
+                <button class="btn-action" onclick="adj('w2', -100000)">Withdraw</button>
+            </div>
+            <div class="wallet">
+                <h4>Wallet 3: Loan Principal</h4>
+                <span class="balance" id="w3">$0.00</span>
+                <button class="btn-action" onclick="adj('w3', 50000)">Deposit</button><br>
+                <button class="btn-action" onclick="adj('w3', -50000)">Withdraw</button>
+            </div>
         </div>
     </div>
 
     <script>
         function adj(id, amt) {
             let el = document.getElementById(id);
-            let val = parseInt(el.innerText.replace(/\$|,/g, ''));
-            el.innerText = "$" + (val + amt).toLocaleString();
+            let current = parseInt(el.innerText.replace(/\$|,/g, ''));
+            el.innerText = "$" + (current + amt).toLocaleString();
+        }
+        function provision() {
+            let name = document.getElementById('pName').value;
+            if(name) alert("Provisioning " + name + " with separate ESTP Account Class.");
         }
     </script>
 </body>
