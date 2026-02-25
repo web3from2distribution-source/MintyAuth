@@ -1,56 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
-<head><link rel="stylesheet" href="style.css"></head>
+<html>
+<head><style>
+    body { background: #0a0c10; color: #fff; font-family: sans-serif; padding: 20px; }
+    .market-view { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .bot-log { background: #000; height: 300px; overflow-y: hidden; font-family: monospace; font-size: 0.8rem; padding: 10px; color: #21ce99; border: 1px solid #2d333b; }
+    .token-card { background: #14171d; padding: 20px; border-left: 4px solid #f7d060; }
+</style></head>
 <body>
-    <div class="gateway-shell">
-        <h1>Public Access Gateway</h1>
-
-        <section class="token-selection yellow-line">
-            <h3>Select Industrial Token (90-Day Lock)</h3>
-            <div class="token-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
-                <button class="token-btn" onclick="selectToken('SHIP', 10000000, 850000)">
-                    <strong>[SHIP]</strong><br><small>Shipping Alpha</small>
-                </button>
-                <button class="token-btn" onclick="selectToken('NRG', 5000000, 100000)">
-                    <strong>[NRG]</strong><br><small>Energy Beta</small>
-                </button>
-                <button class="token-btn" onclick="selectToken('MANU', 25000000, 2000000)">
-                    <strong>[MANU]</strong><br><small>Manufacturing</small>
-                </button>
-                <button class="token-btn" onclick="selectToken('INFRA', 12000000, 500000)">
-                    <strong>[INFRA]</strong><br><small>Infrastructure</small>
-                </button>
-            </div>
-        </section>
-
-        <section class="capacity-monitor red-line" id="cap-section" style="display:none; margin-top:25px;">
-            <h2 id="active-token-title">TOKEN: XXX</h2>
-            <div class="stat-box">
-                <p id="room-left">$0.00 Remaining</p>
-                <small>10% Capacity of Isolated Silo Seed</small>
-            </div>
-            <div class="input-group">
-                <input type="number" id="amt" placeholder="Amount to Lock">
-                <button onclick="lock()">Lock & Trigger ALI</button>
-            </div>
-        </section>
+    <h1>Public Market Simulation</h1>
+    <div class="market-view">
+        <div class="token-card">
+            <h2>Industrial Token: SHIP</h2>
+            <p>Current Market Status: <span style="color:#21ce99;">ACTIVE</span></p>
+            <p>Public Commitments (Locked): <span id="locked-vol">$0.00</span></p>
+            <button onclick="startSim()" id="sim-btn" style="padding:10px; background:#007bff; color:#fff; border:none; cursor:pointer;">START BOTS (30)</button>
+        </div>
+        <div>
+            <h3>Live Trade Feed</h3>
+            <div id="log" class="bot-log">Awaiting Traffic...</div>
+        </div>
     </div>
 
     <script>
-        function selectToken(ticker, seed, used) {
-            document.getElementById('cap-section').style.display = "block";
-            document.getElementById('active-token-title').innerText = `TOKEN: ${ticker}`;
-            const room = (seed * 0.10) - used;
-            document.getElementById('room-left').innerText = `$${room.toLocaleString()} Available`;
-            document.getElementById('room-left').style.color = room > 0 ? "var(--green)" : "var(--red)";
+        let locked = 0;
+        function log(msg, color="#21ce99") {
+            const l = document.getElementById('log');
+            l.innerHTML = `<span style="color:${color}">> ${msg}</span><br>` + l.innerHTML;
         }
-        function lock() {
-            alert("Lock sequence initiated. Instruction sent to Wallet 2 for Auto-Injection.");
+
+        function startSim() {
+            document.getElementById('sim-btn').disabled = true;
+            // Lane 1: Institutional Bots (1-10) - Commit to Lock
+            setInterval(() => {
+                let amt = Math.floor(Math.random() * 5000) + 1000;
+                locked += amt;
+                document.getElementById('locked-vol').innerText = "$" + locked.toLocaleString();
+                log(`[LANE 1] Institutional Lock: $${amt} Token A committed to 30-day smart contract.`, "#007bff");
+            }, 3000);
+
+            // Lane 2: Behavioral Bots (1-20) - Noise/Volatility
+            setInterval(() => {
+                let amt = Math.floor(Math.random() * 2000);
+                let action = Math.random() > 0.5 ? "BUY" : "SELL";
+                if(action === "SELL" && Math.random() > 0.8) {
+                    log(`[LANE 2] Behavioral Early Exit: $${amt} Sold. 14% Penalty processed to W1.`, "#f45531");
+                } else {
+                    log(`[LANE 2] Public ${action}: $${amt} Token A.`, "#f7d060");
+                }
+            }, 1500);
         }
     </script>
-    <style>
-        .token-btn { background: #1c222d; color: #fff; border: 1px solid #2d343f; padding: 20px; text-align: center; }
-        .token-btn:hover { border-color: var(--yellow); cursor: pointer; }
-    </style>
 </body>
 </html>
