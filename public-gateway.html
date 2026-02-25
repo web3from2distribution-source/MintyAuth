@@ -1,53 +1,45 @@
 <!DOCTYPE html>
 <html>
-<head><style>
-    body { background: #0a0c10; color: #fff; font-family: sans-serif; padding: 20px; }
-    .market-view { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .bot-log { background: #000; height: 300px; overflow-y: hidden; font-family: monospace; font-size: 0.8rem; padding: 10px; color: #21ce99; border: 1px solid #2d333b; }
-    .token-card { background: #14171d; padding: 20px; border-left: 4px solid #f7d060; }
-</style></head>
+<head>
+    <style>
+        body { background: #0a0c10; color: #fff; font-family: sans-serif; padding: 30px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .token-card { background: #161b22; border: 1px solid #30363d; padding: 20px; }
+        .log-box { background: #000; border: 1px solid #30363d; height: 300px; overflow-y: hidden; font-family: monospace; font-size: 0.75rem; color: #238636; padding: 15px; }
+        .ticker-btn { background: #1c2128; border: 1px solid #30363d; color: #fff; padding: 15px; cursor: pointer; text-align: left; }
+        .ticker-btn:hover { border-color: #f7d060; }
+    </style>
+</head>
 <body>
-    <h1>Public Market Simulation</h1>
-    <div class="market-view">
+    <h3>PUBLIC ACCESS GATEWAY</h3>
+    <div class="grid">
         <div class="token-card">
-            <h2>Industrial Token: SHIP</h2>
-            <p>Current Market Status: <span style="color:#21ce99;">ACTIVE</span></p>
-            <p>Public Commitments (Locked): <span id="locked-vol">$0.00</span></p>
-            <button onclick="startSim()" id="sim-btn" style="padding:10px; background:#007bff; color:#fff; border:none; cursor:pointer;">START BOTS (30)</button>
+            <p class="label">Select Industry Token (Siloed Assets)</p>
+            <div style="display:grid; gap:10px;">
+                <button class="ticker-btn" onclick="setToken('SHIP')"><strong>[SHIP]</strong> Shipping Alpha</button>
+                <button class="ticker-btn" onclick="setToken('NRG')"><strong>[NRG]</strong> Energy Beta</button>
+                <button class="ticker-btn" onclick="setToken('MANU')"><strong>[MANU]</strong> Manufacturing Gamma</button>
+                <button class="ticker-btn" onclick="setToken('TECH')"><strong>[TECH]</strong> Technology Delta</button>
+            </div>
+            <div style="margin-top:20px;">
+                <button style="background:#238636; color:#fff; border:none; padding:10px; width:100%;" onclick="runSim()">EXECUTE BOT SIMULATION (30 BOTS)</button>
+            </div>
         </div>
-        <div>
-            <h3>Live Trade Feed</h3>
-            <div id="log" class="bot-log">Awaiting Traffic...</div>
-        </div>
+        <div class="log-box" id="log">Awaiting Automated Market Traffic...</div>
     </div>
 
     <script>
-        let locked = 0;
-        function log(msg, color="#21ce99") {
+        function log(msg, col="#238636") {
             const l = document.getElementById('log');
-            l.innerHTML = `<span style="color:${color}">> ${msg}</span><br>` + l.innerHTML;
+            l.innerHTML = `<span style="color:${col}">> ${msg}</span><br>` + l.innerHTML;
         }
-
-        function startSim() {
-            document.getElementById('sim-btn').disabled = true;
-            // Lane 1: Institutional Bots (1-10) - Commit to Lock
+        function runSim() {
+            log("Bot Lane 1 (10 Inst): Initializing 90-Day Lock Patterns...");
+            log("Bot Lane 2 (20 Behv): Initializing Up/Down Trade Waves...");
             setInterval(() => {
-                let amt = Math.floor(Math.random() * 5000) + 1000;
-                locked += amt;
-                document.getElementById('locked-vol').innerText = "$" + locked.toLocaleString();
-                log(`[LANE 1] Institutional Lock: $${amt} Token A committed to 30-day smart contract.`, "#007bff");
+                let amt = Math.floor(Math.random() * 5000);
+                log("[LANE 1] Smart Contract Lock: $"+amt+" Token A committed.");
             }, 3000);
-
-            // Lane 2: Behavioral Bots (1-20) - Noise/Volatility
-            setInterval(() => {
-                let amt = Math.floor(Math.random() * 2000);
-                let action = Math.random() > 0.5 ? "BUY" : "SELL";
-                if(action === "SELL" && Math.random() > 0.8) {
-                    log(`[LANE 2] Behavioral Early Exit: $${amt} Sold. 14% Penalty processed to W1.`, "#f45531");
-                } else {
-                    log(`[LANE 2] Public ${action}: $${amt} Token A.`, "#f7d060");
-                }
-            }, 1500);
         }
     </script>
 </body>
