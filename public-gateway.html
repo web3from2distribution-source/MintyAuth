@@ -1,103 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>ESTP | Public Gateway</title>
-    <link rel="stylesheet" href="style.css">
-</head>
+<head><link rel="stylesheet" href="style.css"></head>
 <body>
     <div class="gateway-shell">
-        <h1>PUBLIC ACCESS GATEWAY</h1>
+        <h1>Public Access Gateway</h1>
 
-        <section class="capacity-monitor red-line">
-            <h2>Current System Capacity</h2>
+        <section class="token-selection yellow-line">
+            <h3>Select Industrial Token (90-Day Lock)</h3>
+            <div class="token-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                <button class="token-btn" onclick="selectToken('SHIP', 10000000, 850000)">
+                    <strong>[SHIP]</strong><br><small>Shipping Alpha</small>
+                </button>
+                <button class="token-btn" onclick="selectToken('NRG', 5000000, 100000)">
+                    <strong>[NRG]</strong><br><small>Energy Beta</small>
+                </button>
+                <button class="token-btn" onclick="selectToken('MANU', 25000000, 2000000)">
+                    <strong>[MANU]</strong><br><small>Manufacturing</small>
+                </button>
+                <button class="token-btn" onclick="selectToken('INFRA', 12000000, 500000)">
+                    <strong>[INFRA]</strong><br><small>Infrastructure</small>
+                </button>
+            </div>
+        </section>
+
+        <section class="capacity-monitor red-line" id="cap-section" style="display:none; margin-top:25px;">
+            <h2 id="active-token-title">TOKEN: XXX</h2>
             <div class="stat-box">
-                <p id="room-display">Calculating Room...</p>
-                <small id="cap-subtitle">Based on 10% of Sovereign Anchor</small>
+                <p id="room-left">$0.00 Remaining</p>
+                <small>10% Capacity of Isolated Silo Seed</small>
             </div>
-            <div class="progress-container" style="background: #222; border-radius: 5px; height: 10px; width: 100%;">
-                <div id="progress-bar" style="background: var(--yellow); width: 0%; height: 100%; transition: 0.5s;"></div>
-            </div>
-        </section>
-
-        <section class="action-gate yellow-line">
-            <h3>Initiate 90-Day Lock (Token A → Token B)</h3>
-            <p>Enter the amount you wish to contribute to the current 6-hour heartbeat.</p>
-            
             <div class="input-group">
-                <input type="number" id="lock-amt" placeholder="Amount of Token A" oninput="validateInput()">
-                <button id="lock-btn" onclick="executeLock()" disabled>INSUFFICIENT CAPACITY</button>
+                <input type="number" id="amt" placeholder="Amount to Lock">
+                <button onclick="lock()">Lock & Trigger ALI</button>
             </div>
-            <p id="validation-msg" style="color: #888; font-size: 0.8rem; margin-top: 10px;"></p>
-        </section>
-
-        <section class="auto-send-log" id="log-section" style="display:none;">
-            <h4 style="color: var(--green);">[SYSTEM] AUTO-SEND TRIGGERED</h4>
-            <p id="auto-send-msg"></p>
         </section>
     </div>
 
     <script>
-        // These values would be pulled from the Bank's Master Ledger in a live environment
-        let anchorValue = 10000000; // The Blue Line
-        let redLineLimit = anchorValue * 0.10; // 10% Max Capacity
-        let currentUtilization = 850000; // Example: $850k already locked by public
-
-        function updateUI() {
-            const roomLeft = redLineLimit - currentUtilization;
-            const percentage = (currentUtilization / redLineLimit) * 100;
-
-            document.getElementById('room-display').innerText = `$${roomLeft.toLocaleString()} Remaining`;
-            document.getElementById('progress-bar').style.width = percentage + "%";
-            
-            if (roomLeft <= 0) {
-                document.getElementById('room-display').innerText = "SYSTEM MAXED";
-                document.getElementById('room-display').style.color = "var(--red)";
-            }
-            return roomLeft;
+        function selectToken(ticker, seed, used) {
+            document.getElementById('cap-section').style.display = "block";
+            document.getElementById('active-token-title').innerText = `TOKEN: ${ticker}`;
+            const room = (seed * 0.10) - used;
+            document.getElementById('room-left').innerText = `$${room.toLocaleString()} Available`;
+            document.getElementById('room-left').style.color = room > 0 ? "var(--green)" : "var(--red)";
         }
-
-        function validateInput() {
-            const inputAmt = parseFloat(document.getElementById('lock-amt').value);
-            const roomLeft = updateUI();
-            const btn = document.getElementById('lock-btn');
-            const msg = document.getElementById('validation-msg');
-
-            if (isNaN(inputAmt) || inputAmt <= 0) {
-                btn.disabled = true;
-                btn.innerText = "ENTER AMOUNT";
-                msg.innerText = "";
-            } else if (inputAmt > roomLeft) {
-                btn.disabled = true;
-                btn.innerText = "EXCEEDS CAPACITY";
-                msg.innerText = `Error: You are attempting to lock $${inputAmt.toLocaleString()}, but only $${roomLeft.toLocaleString()} is available.`;
-                msg.style.color = "var(--red)";
-            } else {
-                btn.disabled = false;
-                btn.innerText = "LOCK & AUTO-SEND";
-                btn.style.background = "var(--green)";
-                msg.innerText = `Ready to lock. This will trigger an $${(inputAmt * 0.75).toLocaleString()} (75%) loan to Industrial Partners.`;
-                msg.style.color = "var(--green)";
-            }
+        function lock() {
+            alert("Lock sequence initiated. Instruction sent to Wallet 2 for Auto-Injection.");
         }
-
-        function executeLock() {
-            const inputAmt = parseFloat(document.getElementById('lock-amt').value);
-            const loanAmt = inputAmt * 0.75;
-            
-            // Log the "Auto-Send" to show the bank it's instantaneous
-            document.getElementById('log-section').style.display = "block";
-            document.getElementById('auto-send-msg').innerText = 
-                `Successfully locked $${inputAmt.toLocaleString()}. 
-                Instruction sent to Wallet 2: Disburse $${loanAmt.toLocaleString()} ALI to Industrial Spending Accounts.`;
-            
-            currentUtilization += inputAmt;
-            updateUI();
-            validateInput();
-        }
-
-        // Initialize display
-        updateUI();
     </script>
+    <style>
+        .token-btn { background: #1c222d; color: #fff; border: 1px solid #2d343f; padding: 20px; text-align: center; }
+        .token-btn:hover { border-color: var(--yellow); cursor: pointer; }
+    </style>
 </body>
 </html>
