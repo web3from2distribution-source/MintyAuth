@@ -1,81 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>ESTP | Bank Regulator Portal</title>
-    <link rel="stylesheet" href="style.css">
-</head>
+<head><link rel="stylesheet" href="style.css"></head>
 <body>
     <div class="regulator-shell">
-        <h1>BANK REGULATOR ACCESS PORTAL</h1>
-        
-        <section class="bank-vault">
-            <h2>Primary Home Account</h2>
-            <p>Institutional Reserve: $<span id="primary-bal">100,000,000</span></p>
-            <div class="action-row">
-                <input type="number" id="transfer-amt" placeholder="Amount">
-                <button onclick="depositToESTP()">Deposit to ESTP</button>
-                <button onclick="withdrawToHome()">Withdraw from ESTP</button>
+        <h1>Bank Regulator | Master Control</h1>
+
+        <section class="provisioning-zone blue-line">
+            <h3>Silo Management: Provision New Partner Account</h3>
+            <div class="input-group">
+                <input type="text" id="p-name" placeholder="Partner Name">
+                <button onclick="addSilo()">Initialize & Seed Silo</button>
             </div>
         </section>
 
-        <section class="estp-anchor blue-line">
-            <h2>Account 1: The ESTP Account (Sovereign Anchor)</h2>
-            <div class="stat-box">
-                <p>Anchor Balance: $<span id="estp-bal">10,000,000</span></p>
-                [span_10](start_span)<small>Read-Only Reference for all Governance Ceilings[span_10](end_span)</small>
-            </div>
-            <button class="purge-trigger" onclick="purgeProtocol()">ACTIVATE PURGE PROTOCOL</button>
-        </section>
-
-        <section class="internal-wallets">
+        <section class="wallet-grid" style="margin-top: 30px;">
             <div class="wallet-pouch">
-                <h3>Wallet 1: Revenue Collector</h3>
+                <h4>Wallet 1: Fee Collector</h4>
                 <p>$<span id="w1-bal">0.00</span></p>
-                [span_11](start_span)<small>Fees (0.25%) & Penalties (14%)[span_11](end_span)</small>
+                <button onclick="manual('w1-bal', 1000)">Deposit</button>
+                <button onclick="manual('w1-bal', -1000)">Withdraw</button>
             </div>
             <div class="wallet-engine">
-                <h3>Wallet 2: Liquidity Engine (ALI Vault)</h3>
+                <h4>Wallet 2: ALI Vault</h4>
                 <p>$<span id="w2-bal">1,000,000</span></p>
-                [span_12](start_span)<small>10% Match Mandate[span_12](end_span)</small>
+                <button onclick="manual('w2-bal', 10000)">Deposit</button>
+                <button onclick="manual('w2-bal', -10000)">Withdraw</button>
             </div>
             <div class="wallet-collector">
-                <h3>Wallet 3: Loan Collector Principal</h3>
+                <h4>Wallet 3: Loan Principal</h4>
                 <p>$<span id="w3-bal">0.00</span></p>
-                [span_13](start_span)<small>Principal + 14% ROI[span_13](end_span)</small>
+                <button onclick="manual('w3-bal', 5000)">Deposit</button>
+                <button onclick="manual('w3-bal', -5000)">Withdraw</button>
             </div>
         </section>
+        
+        <script>
+            function manual(id, amt) {
+                let el = document.getElementById(id);
+                let current = parseFloat(el.innerText.replace(/,/g, ''));
+                el.innerText = (current + amt).toLocaleString();
+            }
+            function addSilo() {
+                const name = document.getElementById('p-name').value;
+                alert(`New ESTP Account Class created for ${name}.`);
+            }
+        </script>
     </div>
-
-    <script>
-        let estpBal = 10000000;
-        let primaryBal = 100000000;
-
-        function depositToESTP() {
-            let amt = parseFloat(document.getElementById('transfer-amt').value);
-            if(amt > 0) {
-                primaryBal -= amt;
-                estpBal += amt;
-                updateDisplay();
-            }
-        }
-
-        function purgeProtocol() {
-            [span_14](start_span)[span_15](start_span)// Instant Contraction Logic[span_14](end_span)[span_15](end_span)
-            [span_16](start_span)[span_17](start_span)if(confirm("Initiate Purge? This will reduce the anchor to zero and trigger One-Way Exit[span_16](end_span)[span_17](end_span)")) {
-                estpBal = 0;
-                updateDisplay();
-                [span_18](start_span)alert("Purge Initiated. Buy gates hard-locked[span_18](end_span).");
-            }
-        }
-
-        function updateDisplay() {
-            document.getElementById('estp-bal').innerText = estpBal.toLocaleString();
-            document.getElementById('primary-bal').innerText = primaryBal.toLocaleString();
-            [span_19](start_span)[span_20](start_span)// Automatically scales Wallet 2 based on 10% mandate[span_19](end_span)[span_20](end_span)
-            document.getElementById('w2-bal').innerText = (estpBal * 0.10).toLocaleString();
-        }
-    </script>
 </body>
 </html>
-
