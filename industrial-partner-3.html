@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ESTP | Industrial Partner 3 (Manufacturing)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="industrial-shell">
+        <h1 style="color: #3399ff;">INDUSTRIAL PORTAL: MANUFACTURING</h1>
+        <section class="spending-account">
+            <h2>Wallet 4: Manufacturing Op-Ex</h2>
+            <div class="stat-box">
+                <p>Available Cash: $<span id="w4-bal">0.00</span></p>
+            </div>
+        </section>
+        <section class="heartbeat-monitor">
+            <h2>Restricted Ledger State: ACTIVE</h2>
+            [span_8](start_span)<p>Collateral Ratio: 1.33x Coverage[span_8](end_span)</p>
+            <p>Locked Token B: $<span id="locked-b">50,000</span></p>
+        </section>
+        <script>
+            [span_9](start_span)// Automated Match Mandate: 10% of total ESTP capacity[span_9](end_span)
+            setTimeout(() => {
+                document.getElementById('w4-bal').innerText = (50000 * 0.75).toLocaleString();
+            }, 5000);
+        </script>
+    </div>
+</body>
+</html>
+
