@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ESTP | Industrial Partner 1 (Shipping)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="industrial-shell">
+        <h1>INDUSTRIAL PORTAL: SHIPPING SECTOR</h1>
+        
+        <section class="spending-account">
+            <h2>Wallet 4: Industrial Spending Account</h2>
+            <div class="stat-box">
+                <p>Available Cash (Token A): $<span id="w4-bal">0.00</span></p>
+                <small>Funds released via Automated Loan Injection (ALI)</small>
+            </div>
+            <p>Shipment Turnover Count: <span id="turnover-count">0</span> / 360</p>
+        </section>
+
+        <section class="heartbeat-monitor green-line">
+            <h2>Current 6-Hour Heartbeat</h2>
+            <div id="heartbeat-status">WAITING FOR COLLATERAL SIGNAL...</div>
+            <div class="collateral-lock">
+                <p>Partner's Locked Token B: $<span id="locked-b">0.00</span></p>
+                <small>Shadow Ledger Security Active</small>
+            </div>
+        </section>
+
+        <section class="roi-return">
+            <h3>Settlement & ROI Insertion</h3>
+            <p>Insert 14% Profit from Turnover:</p>
+            <input type="number" id="roi-amt" placeholder="14% of Industrial Profits">
+            <button onclick="sendToWallet3()">Return Principal + ROI (Wallet 3)</button>
+        </section>
+    </div>
+
+    <script>
+        let wallet4Balance = 0;
+        let lockedCollateral = 10000; [span_6](start_span)// Example: $10k locked[span_6](end_span)
+        
+        [span_7](start_span)// Automated Loan Injection (ALI) Trigger[span_7](end_span)
+        function triggerALI() {
+            document.getElementById('heartbeat-status').innerText = "SIGNAL DETECTED: MINTING LOAN...";
+            
+            [span_8](start_span)[span_9](start_span)// The 75% Advance Logic[span_8](end_span)[span_9](end_span)
+            const advance = lockedCollateral * 0.75; 
+            wallet4Balance += advance;
+            
+            document.getElementById('w4-bal').innerText = wallet4Balance.toLocaleString();
+            document.getElementById('locked-b').innerText = lockedCollateral.toLocaleString();
+            document.getElementById('heartbeat-status').innerText = "HEARTBEAT CONCLUDED: FUNDS RELEASED";
+        }
+
+        function sendToWallet3() {
+            [span_10](start_span)// Sends 14% ROI into the escrow batch[span_10](end_span)
+            alert("Principal + 14% ROI sent to Wallet 3 for Loan Collection.");
+        }
+
+        // Simulating the heartbeat for the demo
+        setTimeout(triggerALI, 3000);
+    </script>
+</body>
+</html>
+
