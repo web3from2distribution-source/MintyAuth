@@ -1,0 +1,31 @@
+<html>
+<body style="background:#0a0c10; color:#fff; font-family:monospace;">
+    <h2>ESTP | PUBLIC ACCESS GATEWAY (Transparent Ledger)</h2>
+    <div id="collateral-status" style="color:#238636;">SYSTEM STATUS: 133.3% COLLATERALIZED</div>
+    
+    <div id="live-ledger" style="border:1px solid #30363d; height:400px; overflow-y:scroll; padding:20px; margin-top:20px;">
+        </div>
+
+    <script>
+        function triggerAutomatedBuy() {
+            let amount = Math.floor(Math.random() * 5000) + 1000;
+            updateLog("BUY", `Public purchased ${amount} units of <strong>Token A</strong>`);
+            
+            // Move to Token B (Lock)
+            setTimeout(() => {
+                updateLog("LOCK", `CONTRACT: ${amount} units locked (Token B). 1.33x Coverage confirmed.`);
+                
+                // Trigger 75% ALI (Loan)
+                let loan = amount * 0.75;
+                updateLog("ALI", `BANK: $${loan.toFixed(2)} Credit Minted for Industrial Flip.`);
+            }, 2000);
+        }
+        
+        function updateLog(type, msg) {
+            const log = document.getElementById('live-ledger');
+            log.innerHTML = `<div>[${new Date().toLocaleTimeString()}] <span class="${type}">${msg}</span></div>` + log.innerHTML;
+        }
+        setInterval(triggerAutomatedBuy, 5000);
+    </script>
+</body>
+</html>
