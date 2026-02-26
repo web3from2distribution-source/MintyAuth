@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ESTP Sovereign Minting Authority</title>
+    <style>
+        body { background-color: #0d1117; color: #c9d1d9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; }
+        .header { border-bottom: 2px solid #58a6ff; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .card { background: #161b22; border: 1px solid #30363d; padding: 20px; border-radius: 10px; text-align: center; }
+        .label { font-size: 0.8em; color: #8b949e; text-transform: uppercase; margin-bottom: 10px; }
+        .value { font-size: 1.8em; font-weight: bold; color: #58a6ff; }
+        .ledger-container { margin-top: 30px; background: #010409; border: 1px solid #30363d; border-radius: 10px; height: 400px; display: flex; flex-direction: column; }
+        .ledger-header { padding: 15px; border-bottom: 1px solid #30363d; font-weight: bold; background: #161b22; border-radius: 10px 10px 0 0; }
+        #ledger { padding: 15px; overflow-y: auto; flex-grow: 1; font-family: 'Courier New', Courier, monospace; font-size: 0.9em; }
+        .log-entry { margin-bottom: 8px; border-bottom: 1px solid #21262d; padding-bottom: 4px; line-height: 1.4; }
+        .tag { font-weight: bold; padding: 2px 6px; border-radius: 3px; margin-right: 8px; font-size: 0.8em; }
+        .tag-lock { background: #1f6feb; color: white; } /* Token A -> B */
+        .tag-mint { background: #d29922; color: black; } /* ALI Loan */
+        .tag-settle { background: #238636; color: white; } /* Token C Payout */
+        .highlight { color: #f0883e; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div><strong>ESTP BANKING PROTOCOL</strong> | Commercial Account Class</div>
+    <div style="color: #238636;">● SYSTEM SECURED (133.33% Collateralized)</div>
+</div>
+
+<div class="grid">
+    <div class="card">
+        <div class="label">Total Public Locks (Token A)</div>
+        <div id="total-locked" class="value">$0.00</div>
+        <div style="font-size: 0.7em; margin-top: 5px;">Must be 1.33x of Active Loans</div>
+    </div>
+    <div class="card">
+        <div class="label">Active Industrial Loans (ALI)</div>
+        <div id="active-ali" class="value">$0.00</div>
+        <div style="font-size: 0.7em; margin-top: 5px; color: #f85149;">Hard Cap: $1,000,000 (10%)</div>
+    </div>
+    <div class="card">
+        <div class="label">Bank Revenue (Wallet 1)</div>
+        <div id="bank-fees" class="value">$0.00</div>
+        <div style="font-size: 0.7em; margin-top: 5px;">0.25% Transactional Capture</div>
+    </div>
+</div>
+
+<div class="ledger-container">
+    <div class="ledger-header">LIVE TRANSACTIONAL LEDGER (6-Hour Heartbeat Simulation)</div>
+    <div id="ledger"></div>
+</div>
+
+<script>
+    // --- MASTER CONFIGURATION ---
+    const ANCHOR_LIMIT = 1000000; // 10% of $10M
+    const LTV_RATIO = 0.75;       // 75% LTV (Requires 1.33x Collateral)
+    const BANK_FEE = 0.0025;      // 0.25%
+    const SHIPPING_MARKUP = 0.072;// 7.2% per Flip
+
+    let vault = {
+        locked: 0,
+        ali: 0,
+        fees: 0
+    };
+
+    function updateDisplay() {
+        document.getElementById('total-locked').innerText = '$' + vault.locked.toLocaleString(undefined, {minimumFractionDigits: 2});
+        document.getElementById('active-ali').innerText = '$' + vault.ali.toLocaleString(undefined, {minimumFractionDigits: 2});
+        document.getElementById('bank-fees').innerText = '$' + vault.fees.toLocaleString(undefined, {minimumFractionDigits: 2});
+    }
+
+    function addLog(type, message) {
+        const ledger = document.getElementById('ledger');
+        const time = new Date().toLocaleTimeString();
+        let tagClass = 'tag-lock';
+        if (type === 'MINT') tagClass = 'tag-mint';
+        if (type === 'SETTLE') tagClass = 'tag-settle';
+
+        const entry = `<div class="log-entry">
+            [${time}] <span class="tag ${tagClass}">${type}</span> ${message}
+        </div>`;
+        ledger.innerHTML = entry + ledger.innerHTML;
+    }
+
+    // --- THE HEARTBEAT LOOP ---
+    function runSimulation() {
+        // 1. A public user buys and locks Token A
+        let incomingCollateral = Math.floor(Math.random() * 50000) + 20000;
+        
+        // Check if adding the corresponding 75% loan would exceed the $1M cap
+        let potentialLoan = incomingCollateral * LTV_RATIO;
+
+        if (vault.ali + potentialLoan <= ANCHOR_LIMIT) {
+            // SUCCESSFUL LOCK
+            vault.locked += incomingCollateral;
+            addLog('LOCK', `User committed <span class="highlight">$${incomingCollateral.toLocaleString()}</span> to 30-Day Lock (Token B).`);
+
+            // IMMEDIATE MINT (75% of Lock)
+            vault.ali += potentialLoan;
+            vault.fees += (potentialLoan * BANK_FEE);
+            addLog('MINT', `Bank authorized <span class="highlight">$${potentialLoan.toLocaleString()}</span> ALI to Shipping Alpha (1.33x Collateral verified).`);
+
+            // SIMULATE INDUSTRIAL "FLIP" COMPLETION
+            setTimeout(() => {
+                let industrialGain = potentialLoan * SHIPPING_MARKUP;
+                vault.ali -= potentialLoan; // Loan Principal Repaid
+                addLog('SETTLE', `Shipment Complete. Industrial Profit: $${industrialGain.toLocaleString()}. <strong>Token C ROI Distributed.</strong>`);
+                updateDisplay();
+            }, 5000); // 5 seconds represents the duration of one flip
+
+        } else {
+            addLog('LOCK', `<span style="color:#f85149;">HOLD:</span> Max 10% Cap ($1M) reached. Waiting for industrial repayment...`);
+        }
+        updateDisplay();
+    }
+
+    // Start heartbeat every 4 seconds
+    updateDisplay();
+    setInterval(runSimulation, 4000);
+</script>
+
+</body>
+</html>
