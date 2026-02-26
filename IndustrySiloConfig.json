@@ -1,0 +1,12 @@
+{
+  "SHIPPING_ALPHA": {
+    "flipsPerMonth": 12.0,
+    "markup": 0.072,
+    "lockPeriod": "30 Days"
+  },
+  "ENERGY_BETA": {
+    "flipsPerMonth": 1.3,
+    "markup": 0.14,
+    "lockPeriod": "90 Days"
+  }
+}
